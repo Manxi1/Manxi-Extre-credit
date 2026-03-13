@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Algorithms Portfolio</title>
+  <style>
+    /* ── Reset & Variables ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0d1117;
+      --surface:    #161b22;
+      --border:     #30363d;
+      --text:       #e6edf3;
+      --muted:      #8b949e;
+      --accent:     #58a6ff;
+
+      --green:      #3fb950;
+      --orange:     #f0883e;
+      --purple:     #d2a8ff;
+      --red:        #ff7b72;
+      --yellow:     #e3b341;
+      --teal:       #39d353;
+
+      --greedy-clr: #f0883e;
+      --dc-clr:     #58a6ff;
+      --dp-clr:     #3fb950;
+      --np-clr:     #ff7b72;
+
+      --radius:     12px;
+      --radius-sm:  6px;
+      --font-mono:  'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ── Navigation ────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,17,23,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      height: 60px;
+    }
+
+    .nav-brand {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.25rem;
+      list-style: none;
+      margin-left: auto;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 0.3rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); background: var(--border); }
+    .nav-links a.greedy  { color: var(--greedy-clr); }
+    .nav-links a.dc      { color: var(--dc-clr); }
+    .nav-links a.dp      { color: var(--dp-clr); }
+    .nav-links a.np      { color: var(--np-clr); }
+
+    /* ── Hero ──────────────────────────────────────────────────────── */
+    .hero {
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(88,166,255,0.08) 0%, transparent 70%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(88,166,255,0.12);
+      border: 1px solid rgba(88,166,255,0.25);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 span { color: var(--accent); }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Main Layout ───────────────────────────────────────────────── */
+    main { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+
+    /* ── Section Headers ───────────────────────────────────────────── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .section-count {
+      margin-left: auto;
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: var(--border);
+      padding: 0.2rem 0.7rem;
+      border-radius: 12px;
+    }
+
+    section { margin-bottom: 4rem; }
+
+    /* ── Algorithm Cards ───────────────────────────────────────────── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.2s, box-shadow 0.25s;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+
+    /* Color accents per category */
+    .card.greedy::before  { background: var(--greedy-clr); }
+    .card.dc::before      { background: var(--dc-clr); }
+    .card.dp::before      { background: var(--dp-clr); }
+    .card.np::before      { background: var(--np-clr); }
+
+    .card.greedy:hover  { border-color: var(--greedy-clr); }
+    .card.dc:hover      { border-color: var(--dc-clr); }
+    .card.dp:hover      { border-color: var(--dp-clr); }
+    .card.np:hover      { border-color: var(--np-clr); }
+
+    .card-header {
+      padding: 1.25rem 1.5rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .card-num {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      background: var(--bg);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+
+    .card-body {
+      padding: 0.75rem 1.5rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    /* ── Complexity Badges ─────────────────────────────────────────── */
+    .badges {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      padding: 0 1.5rem 0.5rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 5px;
+      border: 1px solid;
+    }
+
+    .badge-time  { color: var(--yellow); border-color: rgba(227,179,65,.3); background: rgba(227,179,65,.08); }
+    .badge-space { color: var(--purple); border-color: rgba(210,168,255,.3); background: rgba(210,168,255,.08); }
+    .badge-cat   { color: var(--teal);   border-color: rgba(57,211,83,.3);   background: rgba(57,211,83,.08); }
+
+    /* ── Code Block ────────────────────────────────────────────────── */
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin: 0 1.5rem;
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.9rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .code-dots span {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .dot-red    { background: #ff5f57; }
+    .dot-yellow { background: #febc2e; }
+    .dot-green  { background: #28c840; }
+
+    .code-filename {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    pre {
+      padding: 1rem;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.65;
+      color: #cdd9e5;
+    }
+
+    /* Syntax coloring */
+    .kw  { color: #ff7b72; }   /* keywords */
+    .fn  { color: #d2a8ff; }   /* functions */
+    .cm  { color: #8b949e; font-style: italic; } /* comments */
+    .st  { color: #a5d6ff; }   /* strings */
+    .nu  { color: #79c0ff; }   /* numbers */
+    .op  { color: #79c0ff; }   /* operators */
+
+    /* ── Key Insight Box ───────────────────────────────────────────── */
+    .insight {
+      margin: 0 1.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      border-left: 3px solid;
+      font-size: 0.88rem;
+    }
+
+    .insight.greedy { background: rgba(240,136,62,.07);  border-color: var(--greedy-clr); color: #f0883e; }
+    .insight.dc     { background: rgba(88,166,255,.07);  border-color: var(--dc-clr);     color: #58a6ff; }
+    .insight.dp     { background: rgba(63,185,80,.07);   border-color: var(--dp-clr);     color: #3fb950; }
+    .insight.np     { background: rgba(255,123,114,.07); border-color: var(--np-clr);     color: #ff7b72; }
+
+    .insight strong { display: block; margin-bottom: 0.2rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; }
+
+    /* ── Card Footer ───────────────────────────────────────────────── */
+    .card-footer {
+      padding: 0.9rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.4rem 0.9rem;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      transition: opacity 0.2s;
+      cursor: pointer;
+    }
+
+    .btn:hover { opacity: 0.8; }
+
+    .btn-primary { background: var(--accent); color: #0d1117; }
+    .btn-ghost   { background: var(--border);  color: var(--text); }
+
+    .card-footer .file-path {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* ── Comparison Table ──────────────────────────────────────────── */
+    .comparison {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 4rem;
+    }
+
+    .comparison-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th {
+      background: var(--bg);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0.75rem 1.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 0.85rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.15rem 0.55rem;
+      border-radius: 4px;
+    }
+
+    .tag-greedy  { background: rgba(240,136,62,.15);  color: var(--greedy-clr); }
+    .tag-dc      { background: rgba(88,166,255,.15);  color: var(--dc-clr); }
+    .tag-dp      { background: rgba(63,185,80,.15);   color: var(--dp-clr); }
+    .tag-np      { background: rgba(255,123,114,.15); color: var(--np-clr); }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.82em;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 0.1em 0.4em;
+      border-radius: 4px;
+      color: var(--purple);
+    }
+
+    /* ── Footer ────────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Responsive ────────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .cards { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .hero h1 { font-size: 1.8rem; }
+      .hero-stats { gap: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ NAV ═══════════════════════════════ -->
+<nav>
+  <a class="nav-brand" href="#">⚡ Algorithms</a>
+  <ul class="nav-links">
+    <li><a class="greedy" href="#greedy">Greedy</a></li>
+    <li><a class="dc"     href="#dc">Divide &amp; Conquer</a></li>
+    <li><a class="dp"     href="#dp">Dynamic Programming</a></li>
+    <li><a class="np"     href="#np">NP</a></li>
+    <li><a           href="#comparison">Compare</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════ HERO ══════════════════════════════ -->
+<header class="hero">
+  <div class="hero-badge">Algorithm Design Portfolio</div>
+  <h1>Classic <span>Algorithms</span><br>Explained &amp; Implemented</h1>
+  <p class="hero-sub">
+    Seven algorithms across four paradigms — each with clean Python code,
+    step-by-step walkthroughs, and real-world context.
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-number">7</span>
+      <span class="stat-label">Algorithms</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number">4</span>
+      <span class="stat-label">Paradigms</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number">Python</span>
+      <span class="stat-label">Language</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number">+1</span>
+      <span class="stat-label">NP Extra Credit</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════ MAIN ══════════════════════════════ -->
+<main>
+
+  <!-- ─────────────────────────── GREEDY ─────────────────────────────── -->
+  <section id="greedy">
+    <div class="section-header">
+      <div class="section-dot" style="background:var(--greedy-clr)"></div>
+      <h2 class="section-title">Greedy Algorithms</h2>
+      <span class="section-count">2 algorithms</span>
+    </div>
+
+    <div class="cards">
+
+      <!-- Card 1 — Activity Selection -->
+      <div class="card greedy">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Activity Selection</div>
+          </div>
+          <span class="card-num">greedy / 01</span>
+        </div>
+
+        <p class="card-body">
+          Given activities with start and finish times, select the
+          <strong>maximum number of non-overlapping activities</strong>.
+          The greedy rule is simple: always pick the activity that
+          finishes earliest.
+        </p>
+
+        <div class="badges">
+          <span class="badge badge-time">⏱ O(n log n)</span>
+          <span class="badge badge-space">◻ O(n)</span>
+          <span class="badge badge-cat">Interval Scheduling</span>
+        </div>
+
+        <div class="insight greedy">
+          <strong>Greedy Choice</strong>
+          Always select the activity with the earliest finish time — this
+          leaves the most remaining time for future activities.
+          Proof: exchange argument shows any deviation cannot improve the count.
+        </div>
+
+        <div class="code-block" style="margin-top:1rem">
+          <div class="code-header">
+            <div class="code-dots">
+              <span class="dot-red"></span>
+              <span class="dot-yellow"></span>
+              <span class="dot-green"></span>
+            </div>
+            <span class="code-filename">activity_selection.py</span>
+          </div>
+          <pre><span class="kw">def</span> <span class="fn">activity_selection</span>(activities):
+    <span class="cm"># Sort by finish time — the greedy key</span>
+    sorted_acts = <span class="fn">sorted</span>(activities, <span class="kw">key</span>=<span class="kw">lambda</span> x: x[<span class="nu">1</span>])
+
+    selected    = [sorted_acts[<span class="nu">0</span>]]
+    last_finish = sorted_acts[<span class="nu">0</span>][<span class="nu">1</span>]
+
+    <span class="kw">for</span> start, finish <span class="kw">in</span> sorted_acts[<span class="nu">1</span>:]:
+        <span class="kw">if</span> start >= last_finish:   <span class="cm"># no overlap</span>
+            selected.append((start, finish))
+            last_finish = finish
+    <span class="kw">return</span> selected</pre>
+        </div>
+
+        <div class="card-footer">
+          <span class="btn btn-ghost">📂 greedy/</span>
+          <span class="file-path">activity_selection.py</span>
+        </div>
+      </div>
+
+      <!-- Card 2 — Huffman -->
+      <div class="card greedy">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Huffman Encoding</div>
+          </div>
+          <span class="card-num">greedy / 02</span>
+        </div>
+
+        <p class="card-body">
+          Construct an <strong>optimal prefix-free binary code</strong> for
+          a set of symbols based on their frequencies. High-frequency symbols
+          get shorter codes; rare symbols get longer ones.
+        </p>
+
+        <div class="badges">
+          <span class="badge badge-time">⏱ O(n log n)</span>
+          <span class="badge badge-space">◻ O(n)</span>
+          <span class="badge badge-cat">Lossless Compression</span>
+        </div>
+
+        <div class="insight greedy">
+          <strong>Greedy Choice</strong>
+          Always merge the two nodes with the <em>lowest</em> frequency.
+          This builds a tree where frequently-used symbols naturally rise
+          to the top (shorter codes).
+        </div>
+
+        <div class="code-block" style="margin-top:1rem">
+          <div class="code-header">
+            <div class="code-dots">
+              <span class="dot-red"></span>
+              <span class="dot-yellow"></span>
+              <span class="dot-green"></span>
+            </div>
+            <span class="code-filename">huffman.py</span>
+          </div>
+          <pre><span class="kw">def</span> <span class="fn">build_huffman_tree</span>(freq_table):
+    heap = [HuffNode(freq=f, symbol=s)
+            <span class="kw">for</span> s, f <span class="kw">in</span> freq_table.items()]
+    heapq.<span class="fn">heapify</span>(heap)
+
+    <span class="kw">while</span> <span class="fn">len</span>(heap) > <span class="nu">1</span>:
+        lo = heapq.<span class="fn">heappop</span>(heap)   <span class="cm"># smallest</span>
+        hi = heapq.<span class="fn">heappop</span>(heap)   <span class="cm"># 2nd smallest</span>
+        merged = HuffNode(
+            freq=lo.freq + hi.freq,
+            left=lo, right=hi)
+        heapq.<span class="fn">heappush</span>(heap, merged)
+    <span class="kw">return</span> heap[<span class="nu">0</span>]</pre>
+        </div>
+
+        <div class="card-footer">
+          <span class="btn btn-ghost">📂 greedy/</span>
+          <span class="file-path">huffman.py</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─────────────────────────── DIVIDE & CONQUER ────────────────── -->
+  <section id="dc">
+    <div class="section-header">
+      <div class="section-dot" style="background:var(--dc-clr)"></div>
+      <h2 class="section-title">Divide &amp; Conquer</h2>
+      <span class="section-count">2 algorithms</span>
+    </div>
+
+    <div class="cards">
+
+      <!-- Card 3 — Merge Sort -->
+      <div class="card dc">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Merge Sort</div>
+          </div>
+          <span class="card-num">d&amp;c / 01</span>
+        </div>
+
+        <p class="card-body">
+          Recursively split the array in half, sort each half, then
+          <strong>merge</strong> the sorted halves. Guarantees
+          O(n log n) in all cases — no worst-case degradation.
+        </p>
+
+        <div class="badges">
+          <span class="badge badge-time">⏱ O(n log n)</span>
+          <span class="badge badge-space">◻ O(n)</span>
+          <span class="badge badge-cat">Stable Sort</span>
+        </div>
+
+        <div class="insight dc">
+          <strong>Recurrence: T(n) = 2T(n/2) + O(n)</strong>
+          Divide into 2 halves — T(n/2) each. Combine by merging — O(n).
+          Master Theorem Case 2 gives Θ(n log n).
+        </div>
+
+        <div class="code-block" style="margin-top:1rem">
+          <div class="code-header">
+            <div class="code-dots">
+              <span class="dot-red"></span>
+              <span class="dot-yellow"></span>
+              <span class="dot-green"></span>
+            </div>
+            <span class="code-filename">merge_sort.py</span>
+          </div>
+          <pre><span class="kw">def</span> <span class="fn">merge_sort</span>(arr):
+    <span class="kw">if</span> <span class="fn">len</span>(arr) <= <span class="nu">1</span>:
+        <span class="kw">return</span> arr          <span class="cm"># base case</span>
+
+    mid   = <span class="fn">len</span>(arr) // <span class="nu">2</span>
+    left  = <span class="fn">merge_sort</span>(arr[:mid])   <span class="cm"># conquer</span>
+    right = <span class="fn">merge_sort</span>(arr[mid:])   <span class="cm"># conquer</span>
+
+    <span class="kw">return</span> <span class="fn">_merge</span>(left, right)     <span class="cm"># combine</span></pre>
+        </div>
+
+        <div class="card-footer">
+          <span class="btn btn-ghost">📂 divide_and_conquer/</span>
+          <span class="file-path">merge_sort.py</span>
+        </div>
+      </div>
+
+      <!-- Card 4 — Binary Search -->
+      <div class="card dc">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Binary Search</div>
+          </div>
+          <span class="card-num">d&amp;c / 02</span>
+        </div>
+
+        <p class="card-body">
+          Search a <strong>sorted array</strong> in O(log n) by repeatedly
+          halving the search space. At each step, compare the midpoint and
+          recurse on only <em>one</em> half.
+        </p>
+
+        <div class="badges">
+          <span class="badge badge-time">⏱ O(log n)</span>
+          <span class="badge badge-space">◻ O(1)</span>
+          <span class="badge badge-cat">Sorted Array Search</span>
+        </div>
+
+        <div class="insight dc">
+          <strong>Recurrence: T(n) = T(n/2) + O(1)</strong>
+          Unlike Merge Sort, only ONE subproblem is pursued.
+          Master Theorem gives Θ(log n) — with 1B elements, only 30 steps!
+        </div>
+
+        <div class="code-block" style="margin-top:1rem">
+          <div class="code-header">
+            <div class="code-dots">
+              <span class="dot-red"></span>
+              <span class="dot-yellow"></span>
+              <span class="dot-green"></span>
+            </div>
+            <span class="code-filename">binary_search.py</span>
+          </div>
+          <pre><span class="kw">def</span> <span class="fn">binary_search</span>(arr, target):
+    lo, hi = <span class="nu">0</span>, <span class="fn">len</span>(arr) - <span class="nu">1</span>
+    <span class="kw">while</span> lo <= hi:
+        mid = (lo + hi) // <span class="nu">2</span>          <span class="cm"># divide</span>
+        <span class="kw">if</span>   arr[mid] == target: <span class="kw">return</span> mid
+        <span class="kw">elif</span> arr[mid] <  target: lo = mid + <span class="nu">1</span>  <span class="cm"># right</span>
+        <span class="kw">else</span>:                    hi = mid - <span class="nu">1</span>  <span class="cm"># left</span>
+    <span class="kw">return</span> -<span class="nu">1</span></pre>
+        </div>
+
+        <div class="card-footer">
+          <span class="btn btn-ghost">📂 divide_and_conquer/</span>
+          <span class="file-path">binary_search.py</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─────────────────────────── DYNAMIC PROGRAMMING ──────────────── -->
+  <section id="dp">
+    <div class="section-header">
+      <div class="section-dot" style="background:var(--dp-clr)"></div>
+      <h2 class="section-title">Dynamic Programming</h2>
+      <span class="section-count">2 algorithms</span>
+    </div>
+
+    <div class="cards">
+
+      <!-- Card 5 — Knapsack -->
+      <div class="card dp">
+        <div class="card-header">
+          <div>
+            <div class="card-title">0/1 Knapsack Problem</div>
+          </div>
+          <span class="card-num">dp / 01</span>
+        </div>
+
+        <p class="card-body">
+          Choose items (each used at most once) to
+          <strong>maximize total value</strong> without exceeding weight
+          capacity W. Greedy fails — DP builds a table of optimal
+          sub-solutions bottom-up.
+        </p>
+
+        <div class="badges">
+          <span class="badge badge-time">⏱ O(n × W)</span>
+          <span class="badge badge-space">◻ O(n × W)</span>
+          <span class="badge badge-cat">Combinatorial Optimization</span>
+        </div>
+
+        <div class="insight dp">
+          <strong>DP Recurrence</strong>
+          dp[i][w] = max( dp[i-1][w],  dp[i-1][w-wᵢ] + vᵢ )
+          — for each item, either skip it or take it if it fits.
+          Optimal substructure + overlapping subproblems → DP wins.
+        </div>
+
+        <div class="code-block" style="margin-top:1rem">
+          <div class="code-header">
+            <div class="code-dots">
+              <span class="dot-red"></span>
+              <span class="dot-yellow"></span>
+              <span class="dot-green"></span>
+            </div>
+            <span class="code-filename">knapsack.py</span>
+          </div>
+          <pre><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">1</span>, n + <span class="nu">1</span>):
+    w_i, v_i = weights[i-<span class="nu">1</span>], values[i-<span class="nu">1</span>]
+    <span class="kw">for</span> w <span class="kw">in</span> <span class="fn">range</span>(capacity + <span class="nu">1</span>):
+        dp[i][w] = dp[i-<span class="nu">1</span>][w]          <span class="cm"># skip item</span>
+        <span class="kw">if</span> w_i <= w:
+            dp[i][w] = <span class="fn">max</span>(
+                dp[i][w],
+                dp[i-<span class="nu">1</span>][w - w_i] + v_i  <span class="cm"># take item</span>
+            )</pre>
+        </div>
+
+        <div class="card-footer">
+          <span class="btn btn-ghost">📂 dynamic_programming/</span>
+          <span class="file-path">knapsack.py</span>
+        </div>
+      </div>
+
+      <!-- Card 6 — LCS -->
+      <div class="card dp">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Longest Common Subsequence</div>
+          </div>
+          <span class="card-num">dp / 02</span>
+        </div>
+
+        <p class="card-body">
+          Find the <strong>longest sequence of characters</strong> appearing
+          in both strings X and Y in the same order (not necessarily
+          contiguous). Foundation of <code>git diff</code> and DNA alignment.
+        </p>
+
+        <div class="badges">
+          <span class="badge badge-time">⏱ O(m × n)</span>
+          <span class="badge badge-space">◻ O(m × n)</span>
+          <span class="badge badge-cat">String Algorithms</span>
+        </div>
+
+        <div class="insight dp">
+          <strong>DP Recurrence</strong>
+          If X[i]==Y[j]: dp[i][j] = dp[i-1][j-1] + 1
+          Else: dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+          Each cell reuses two previously computed sub-results.
+        </div>
+
+        <div class="code-block" style="margin-top:1rem">
+          <div class="code-header">
+            <div class="code-dots">
+              <span class="dot-red"></span>
+              <span class="dot-yellow"></span>
+              <span class="dot-green"></span>
+            </div>
+            <span class="code-filename">lcs.py</span>
+          </div>
+          <pre><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">1</span>, m + <span class="nu">1</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">1</span>, n + <span class="nu">1</span>):
+        <span class="kw">if</span> X[i-<span class="nu">1</span>] == Y[j-<span class="nu">1</span>]:
+            dp[i][j] = dp[i-<span class="nu">1</span>][j-<span class="nu">1</span>] + <span class="nu">1</span>    <span class="cm"># match</span>
+        <span class="kw">else</span>:
+            dp[i][j] = <span class="fn">max</span>(
+                dp[i-<span class="nu">1</span>][j],    <span class="cm"># skip X[i]</span>
+                dp[i][j-<span class="nu">1</span>]     <span class="cm"># skip Y[j]</span>
+            )</pre>
+        </div>
+
+        <div class="card-footer">
+          <span class="btn btn-ghost">📂 dynamic_programming/</span>
+          <span class="file-path">lcs.py</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─────────────────────────── NP EXTRA CREDIT ───────────────────── -->
+  <section id="np">
+    <div class="section-header">
+      <div class="section-dot" style="background:var(--np-clr)"></div>
+      <h2 class="section-title">NP — Extra Credit</h2>
+      <span class="section-count">1 algorithm</span>
+    </div>
+
+    <div class="cards">
+
+      <!-- Card 7 — TSP -->
+      <div class="card np">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Traveling Salesman Problem</div>
+          </div>
+          <span class="card-num">np / 01</span>
+        </div>
+
+        <p class="card-body">
+          Find the <strong>shortest tour</strong> visiting all n cities
+          exactly once. NP-hard — no known polynomial algorithm. This
+          implementation compares three approaches: brute force, exact
+          Held-Karp DP, and a greedy heuristic.
+        </p>
+
+        <div class="badges">
+          <span class="badge badge-time">⏱ O(n² · 2ⁿ) exact</span>
+          <span class="badge badge-space">◻ O(n · 2ⁿ)</span>
+          <span class="badge badge-cat">NP-Hard</span>
+        </div>
+
+        <div class="insight np">
+          <strong>Why NP-Hard?</strong>
+          TSP is NP-complete in its decision form ("is there a tour ≤ k?").
+          The optimization version is NP-hard. For n=20: brute force needs
+          121 quadrillion checks; Held-Karp DP needs only ~419 million.
+        </div>
+
+        <div style="margin: 1rem 1.5rem 0; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; text-align: center;">
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem">
+            <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.3rem">Brute Force</div>
+            <div style="font-family:var(--font-mono);font-size:0.85rem;color:var(--np-clr)">O(n!)</div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:0.2rem">Exact</div>
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem">
+            <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.3rem">Held-Karp DP</div>
+            <div style="font-family:var(--font-mono);font-size:0.85rem;color:var(--dp-clr)">O(n²2ⁿ)</div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:0.2rem">Exact</div>
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem">
+            <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.3rem">Nearest Neighbor</div>
+            <div style="font-family:var(--font-mono);font-size:0.85rem;color:var(--greedy-clr)">O(n²)</div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:0.2rem">Heuristic</div>
+          </div>
+        </div>
+
+        <div class="code-block" style="margin-top:1rem">
+          <div class="code-header">
+            <div class="code-dots">
+              <span class="dot-red"></span>
+              <span class="dot-yellow"></span>
+              <span class="dot-green"></span>
+            </div>
+            <span class="code-filename">tsp.py — Held-Karp DP (core)</span>
+          </div>
+          <pre><span class="cm"># dp[mask][v] = min cost reaching v, visiting cities in mask</span>
+dp[<span class="nu">1</span>][<span class="nu">0</span>] = <span class="nu">0.0</span>   <span class="cm"># start at city 0</span>
+
+<span class="kw">for</span> mask <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">1</span>, <span class="nu">1</span> << n):
+    <span class="kw">for</span> u <span class="kw">in</span> <span class="fn">range</span>(n):
+        <span class="kw">if</span> <span class="kw">not</span> (mask & (<span class="nu">1</span> << u)): <span class="kw">continue</span>
+        <span class="kw">for</span> v <span class="kw">in</span> <span class="fn">range</span>(n):
+            <span class="kw">if</span> mask & (<span class="nu">1</span> << v): <span class="kw">continue</span>   <span class="cm"># visited</span>
+            new_mask = mask | (<span class="nu">1</span> << v)
+            dp[new_mask][v] = <span class="fn">min</span>(
+                dp[new_mask][v],
+                dp[mask][u] + dist[u][v]
+            )</pre>
+        </div>
+
+        <div class="card-footer">
+          <span class="btn btn-ghost">📂 np_extra_credit/</span>
+          <span class="file-path">tsp.py</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─────────────────────────── COMPARISON TABLE ─────────────────── -->
+  <section id="comparison">
+    <div class="comparison">
+      <div class="comparison-header">Algorithm Complexity Overview</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Algorithm</th>
+            <th>Paradigm</th>
+            <th>Time (Avg)</th>
+            <th>Time (Worst)</th>
+            <th>Space</th>
+            <th>Optimal?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Activity Selection</strong></td>
+            <td><span class="tag tag-greedy">Greedy</span></td>
+            <td><code>O(n log n)</code></td>
+            <td><code>O(n log n)</code></td>
+            <td><code>O(n)</code></td>
+            <td style="color:var(--green)">Yes</td>
+          </tr>
+          <tr>
+            <td><strong>Huffman Encoding</strong></td>
+            <td><span class="tag tag-greedy">Greedy</span></td>
+            <td><code>O(n log n)</code></td>
+            <td><code>O(n log n)</code></td>
+            <td><code>O(n)</code></td>
+            <td style="color:var(--green)">Yes</td>
+          </tr>
+          <tr>
+            <td><strong>Merge Sort</strong></td>
+            <td><span class="tag tag-dc">D&amp;C</span></td>
+            <td><code>O(n log n)</code></td>
+            <td><code>O(n log n)</code></td>
+            <td><code>O(n)</code></td>
+            <td style="color:var(--green)">Yes</td>
+          </tr>
+          <tr>
+            <td><strong>Binary Search</strong></td>
+            <td><span class="tag tag-dc">D&amp;C</span></td>
+            <td><code>O(log n)</code></td>
+            <td><code>O(log n)</code></td>
+            <td><code>O(1)</code></td>
+            <td style="color:var(--green)">Yes</td>
+          </tr>
+          <tr>
+            <td><strong>0/1 Knapsack</strong></td>
+            <td><span class="tag tag-dp">DP</span></td>
+            <td><code>O(n × W)</code></td>
+            <td><code>O(n × W)</code></td>
+            <td><code>O(n × W)</code></td>
+            <td style="color:var(--green)">Yes</td>
+          </tr>
+          <tr>
+            <td><strong>LCS</strong></td>
+            <td><span class="tag tag-dp">DP</span></td>
+            <td><code>O(m × n)</code></td>
+            <td><code>O(m × n)</code></td>
+            <td><code>O(m × n)</code></td>
+            <td style="color:var(--green)">Yes</td>
+          </tr>
+          <tr>
+            <td><strong>TSP (Held-Karp)</strong></td>
+            <td><span class="tag tag-np">NP-Hard</span></td>
+            <td><code>O(n² · 2ⁿ)</code></td>
+            <td><code>O(n² · 2ⁿ)</code></td>
+            <td><code>O(n · 2ⁿ)</code></td>
+            <td style="color:var(--green)">Yes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════════════ FOOTER ════════════════════════════ -->
+<footer>
+  <p>Algorithm Design Portfolio &mdash; 7 Algorithms · 4 Paradigms · Python</p>
+  <p style="margin-top:0.5rem">
+    Each algorithm has a detailed <code>README.md</code> with proofs,
+    walkthroughs, and real-world applications.
+  </p>
+</footer>
+
+</body>
+</html>
